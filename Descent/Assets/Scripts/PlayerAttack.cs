@@ -10,6 +10,14 @@ public class PlayerAttack : MonoBehaviour
     public KeyCode primaryAttackKey = KeyCode.E;
     public KeyCode secondaryAttackKey = KeyCode.Space;
 
+    // play hit sound
+    private AudioSource audioSource;
+
+    void Start()
+    {
+        audioSource = GetComponent<AudioSource>();
+    }
+
     void Update()
     {
         if (Input.GetKeyDown(primaryAttackKey) || Input.GetKeyDown(secondaryAttackKey))
@@ -25,6 +33,9 @@ public class PlayerAttack : MonoBehaviour
             FindObjectsSortMode.None
         );
 
+        // check to see if enemy was hit
+        bool hitAnything = false;
+
         foreach (EnemyHealth enemy in enemies)
         {
             float distance = Vector2.Distance(transform.position, enemy.transform.position);
@@ -33,7 +44,13 @@ public class PlayerAttack : MonoBehaviour
             {
                 Debug.Log("Hit enemy: " + enemy.name + " for " + damage + " damage.");
                 enemy.TakeDamage(damage);
+                hitAnything = true;
             }
+        }
+        //play sound if condition is true
+        if (hitAnything && audioSource != null)
+        {
+            audioSource.Play();
         }
     }
 

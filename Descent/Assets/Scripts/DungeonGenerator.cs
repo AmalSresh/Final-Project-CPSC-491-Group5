@@ -32,10 +32,10 @@ public class DungeonGenerator : MonoBehaviour
     private HashSet<Vector2Int> floorPositions = new HashSet<Vector2Int>();
     private List<Room> rooms = new List<Room>();
 
-    private void Start()
-    {
-        GenerateDungeon();
-    }
+    // private void Start()
+    // {
+    //     GenerateDungeon();
+    // }
 
     public void GenerateDungeon()
     {
@@ -121,10 +121,13 @@ public class DungeonGenerator : MonoBehaviour
     {
         Vector2Int currentPosition = start;
 
+        // made walking paths to new rooms wider to accommodate enemies and player
         for (int i = 0; i < randomWalkSteps; i++)
         {
             floorPositions.Add(currentPosition);
-
+            floorPositions.Add(new Vector2Int(currentPosition.x + 1, currentPosition.y));
+            floorPositions.Add(new Vector2Int(currentPosition.x, currentPosition.y + 1));
+            floorPositions.Add(new Vector2Int(currentPosition.x + 1, currentPosition.y + 1));
             if (currentPosition == end)
             {
                 break;
@@ -216,6 +219,16 @@ public class DungeonGenerator : MonoBehaviour
             new Vector2Int(-1, 1),
             new Vector2Int(-1, -1)
         };
+    }
+    public List<Vector2> GetWalkableTiles()
+    {
+        List<Vector2> positions = new List<Vector2>();
+        foreach (Vector2Int pos in floorPositions)
+        {
+            // Adding 0.5f centers the enemy perfectly in the middle of the tile
+            positions.Add(new Vector2(pos.x + 0.5f, pos.y + 0.5f)); 
+        }
+        return positions;
     }
 }
 
