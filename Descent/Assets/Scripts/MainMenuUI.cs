@@ -7,16 +7,10 @@ public class MainMenuUI : MonoBehaviour
     public AudioMixer audioMixer;
 
     [Header("Background Music")]
-    [Tooltip("AudioSource whose clip is your background music. " +
-             "Set Loop = ON, Play On Awake = OFF on this AudioSource.")]
     public AudioSource musicSource;
-
-    // Tag used to prevent duplicate music objects after scene reloads
-    private const string MusicTag = "PersistentMusic";
 
     void Start()
     {
-        // Apply saved volume to mixer
         float volume = PlayerPrefs.GetFloat("MasterVolume", 1f);
         volume = Mathf.Clamp(volume, 0.0001f, 1f);
         if (audioMixer != null)
@@ -29,18 +23,17 @@ public class MainMenuUI : MonoBehaviour
     {
         if (musicSource == null) return;
 
-        // Check if persistent music is already playing from a previous visit
-        // to avoid stacking duplicate music objects
-        GameObject existing = GameObject.FindGameObjectWithTag(MusicTag);
+        // Check if a MusicManager already exists from a previous scene load
+        MusicManager existing = Object.FindFirstObjectByType<MusicManager>();
         if (existing != null)
         {
-            // Music is already alive from a prior scene load — don't start a second copy
+            // Already playing — destroy the duplicate source on this object
             Destroy(musicSource.gameObject);
             return;
         }
 
-        // Tag and persist this music object so it survives scene loads
-        musicSource.gameObject.tag = MusicTag;
+        // Move the music source to a dedicated persistent manager
+        musicSource.gameObject.AddComponent<MusicManager>();
         DontDestroyOnLoad(musicSource.gameObject);
 
         if (!musicSource.isPlaying)
