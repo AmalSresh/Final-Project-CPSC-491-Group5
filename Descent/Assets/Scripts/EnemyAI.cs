@@ -10,9 +10,15 @@ public class EnemyAI : MonoBehaviour
     private float lastDamageTime;
     private Rigidbody2D rb;
 
+    //
+    private SpriteRenderer SpriteRenderer;
+
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+
+        // Make sprite change direction based on movement
+        SpriteRenderer = GetComponent<SpriteRenderer>();
 
         GameObject playerObject = GameObject.FindGameObjectWithTag("Player");
         if (playerObject != null)
@@ -28,6 +34,15 @@ public class EnemyAI : MonoBehaviour
         Vector2 direction = ((Vector2)player.position - rb.position).normalized;
         Vector2 newPosition = rb.position + direction * speed * Time.fixedDeltaTime;
         rb.MovePosition(newPosition);
+
+        if (direction.x > 0.1f)
+        {
+            SpriteRenderer.flipX = false;
+        }
+        else if (direction.x < -0.1f)
+        {
+            SpriteRenderer.flipX = true;
+        }
     }
 
     void OnCollisionStay2D(Collision2D collision)

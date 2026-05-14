@@ -8,11 +8,26 @@ public class PlayerHealth : MonoBehaviour
     public int currentHealth;
 
     public Slider healthBar;
-    public GameObject GameOverUI;
-
+   
     void Start()
     {
         currentHealth = maxHealth;
+        ReconnectAndSyncUI();
+    }
+
+    public void ReconnectAndSyncUI()
+    {
+        GameObject foundSlider = GameObject.Find("HealthBar");
+        if (foundSlider != null)
+        {
+            healthBar = foundSlider.GetComponent<Slider>();
+            healthBar.maxValue = maxHealth;
+        }
+        else
+        {
+            Debug.LogWarning("Could not find HealthBar in this scene.");
+        }
+
         UpdateHealthBar();
     }
 
@@ -37,27 +52,52 @@ public class PlayerHealth : MonoBehaviour
         UpdateHealthBar();
     }
 
-    void UpdateHealthBar()
+    public void UpdateHealthBar()
     {
+        Debug.Log("UpdateHealthBar is being called");
         if (healthBar != null)
-        {
-            healthBar.value = (float)currentHealth / maxHealth;
+        {   
+            Debug.Log("Healthbar exists! Updating value.");
+            healthBar.value = currentHealth;
         }
+    }
+
+    public void ResetHealth()
+    {
+        currentHealth = maxHealth; 
+        
+        ReconnectAndSyncUI();
+        Debug.Log("Player Health and UI Reset to Full.");
+    }
+
+    void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        Debug.Log("New scene loaded! Player is looking for the new Healthbar...");
+        
+        ReconnectAndSyncUI();
     }
 
     void Die()
     {
         Debug.Log("Player Died");
 
-        if (GameOverUI != null)
+        if (GameOverManager.Instance != null)
         {
-            GameOverUI.SetActive(true);
+            GameOverManager.Instance.Show();
         }
         else
         {
-            Debug.LogError("GameOverUI is NOT assigned in Inspector!");
+            Debug.LogError("Player died, but GameOverManager is missing from the scene!");
         }
-
-        Time.timeScale = 0f;
     }
 }

@@ -3,21 +3,17 @@ using UnityEngine;
 public class PlayerSpawner : MonoBehaviour
 {
     public GameObject playerPrefab;
-    public Transform spawnPoint;
-
-    void Start()
+    
+    public GameObject SpawnPlayerAt(Vector2 spawnPosition)
     {
-        SpawnPlayer();
-    }
-
-    void SpawnPlayer()
-    {
-        if (playerPrefab == null || spawnPoint == null)
+        if (playerPrefab == null)
         {
-            Debug.LogError("Missing player prefab or spawn point!");
-            return;
+            Debug.LogError("Player Prefab is missing in the Inspector!");
+            return null;
         }
 
-        Instantiate(playerPrefab, spawnPoint.position, Quaternion.identity);
+        // Spawn the player at the exact coordinate provided
+        GameObject newPlayer = Instantiate(playerPrefab, spawnPosition, Quaternion.identity);
+        return newPlayer;
     }
 }
