@@ -5,14 +5,26 @@ public class EnemySpawner : MonoBehaviour
 {
     [Header("Enemy Settings")]
     public GameObject[] enemyPrefabs; 
+    
+    [Tooltip("The base number of enemies per chunk on Level 1")]
     public int enemiesPerFiftyTiles = 1; 
 
     public void SpawnEnemies(List<Vector2> floorPositions)
     {
+        int currentLevel = 1;
+        if (GameManager.Instance != null)
+        {
+            currentLevel = GameManager.Instance.level;
+        }
+
+        int scaledEnemiesPerFiftyTiles = enemiesPerFiftyTiles + (currentLevel - 1);
+
+        scaledEnemiesPerFiftyTiles = Mathf.Max(1, scaledEnemiesPerFiftyTiles);
+
         List<Vector2> availableTiles = new List<Vector2>(floorPositions);
-        int targetSpawnCount = (floorPositions.Count / 300) * enemiesPerFiftyTiles;
         
-        // NEW: Keep an exact tally of successful spawns
+        int targetSpawnCount = (floorPositions.Count / 300) * scaledEnemiesPerFiftyTiles;
+        
         int actualSpawnCount = 0; 
 
         for (int i = 0; i < targetSpawnCount; i++)
@@ -26,11 +38,9 @@ public class EnemySpawner : MonoBehaviour
             GameObject randomEnemy = enemyPrefabs[Random.Range(0, enemyPrefabs.Length)];
             Instantiate(randomEnemy, new Vector3(randomTile.x, randomTile.y, -0.1f), Quaternion.identity);
             
-            // Successfully spawned one!
             actualSpawnCount++; 
         }
 
-        // Pass the EXACT foolproof number to the GameManager
         if (GameManager.Instance != null)
         {
             GameManager.Instance.SetTargetEnemyCount(actualSpawnCount);
