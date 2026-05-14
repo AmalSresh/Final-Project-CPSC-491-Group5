@@ -3,22 +3,30 @@ using UnityEngine;
 public class EnemyAI : MonoBehaviour
 {
     public float speed = 2f;
-    public int damage = 1;
+    public int baseDamage = 1;
     public float damageCooldown = 1f;
 
+    private int currentDamage; 
     private Transform player;
     private float lastDamageTime;
     private Rigidbody2D rb;
 
-    //
     private SpriteRenderer SpriteRenderer;
 
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
-
-        // Make sprite change direction based on movement
         SpriteRenderer = GetComponent<SpriteRenderer>();
+
+        int currentLevel = 1; 
+        if (GameManager.Instance != null)
+        {
+            currentLevel = GameManager.Instance.level;
+        }
+
+        currentDamage = baseDamage + (currentLevel - 1);
+
+        currentDamage = Mathf.Max(baseDamage, currentDamage);
 
         GameObject playerObject = GameObject.FindGameObjectWithTag("Player");
         if (playerObject != null)
@@ -55,7 +63,8 @@ public class EnemyAI : MonoBehaviour
 
                 if (playerHealth != null)
                 {
-                    playerHealth.TakeDamage(damage);
+                    // 3. Deal the exact integer damage
+                    playerHealth.TakeDamage(currentDamage);
                     lastDamageTime = Time.time;
                 }
             }

@@ -9,7 +9,6 @@ public class EnemyHealth : MonoBehaviour
 
     public Slider healthBar;
 
-    //
     private Animator anim;
     private AudioSource audioSource;
 
@@ -17,6 +16,16 @@ public class EnemyHealth : MonoBehaviour
 
     void Start()
     {
+        int currentLevel = 1;
+        if (GameManager.Instance != null)
+        {
+            currentLevel = GameManager.Instance.level;
+        }
+
+        maxHealth = maxHealth + (currentLevel - 1);
+        
+        maxHealth = Mathf.Max(1, maxHealth);
+
         currentHealth = maxHealth;
 
         // Animate and play sounds based on enemy states
@@ -81,5 +90,4 @@ public class EnemyHealth : MonoBehaviour
         
         Destroy(gameObject, audioSource.clip.length + 0.1f);
     }
-
 }
