@@ -71,7 +71,7 @@ public class GameManager : MonoBehaviour
 
         // Spawn Enemies & Update Goal
         enemySpawner.SpawnEnemies(validTiles);
-        CountEnemiesInLevel();
+        //CountEnemiesInLevel();
 
         // Spawn Player
         if (validTiles.Count > 0)
@@ -116,12 +116,11 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void CountEnemiesInLevel()
+    public void SetTargetEnemyCount(int exactCount)
     {
-        // Finds every object with the EnemyHealth script currently in the scene
-        enemiesRequiredToWin = Object.FindObjectsByType<EnemyHealth>(FindObjectsSortMode.None).Length;
+        enemiesRequiredToWin = exactCount;
         levelKills = 0; 
-        Debug.Log("Enemies in this level: " + enemiesRequiredToWin);
+        Debug.Log("Enemies locked in for this level: " + enemiesRequiredToWin);
     }
 
     public void ResetGame()
