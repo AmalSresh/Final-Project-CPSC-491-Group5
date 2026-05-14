@@ -19439,7 +19439,7 @@ MonoBehaviour:
   - {fileID: 3305789044703891763, guid: 35d090b8968b5f2488718d18a2adf789, type: 3}
   - {fileID: 1560965221720706517, guid: e775262600455ef4296a45abf806815c, type: 3}
   - {fileID: 6003813695885492904, guid: 95fd26e0a6d057a4e9898c848bd113c3, type: 3}
-  enemiesPerFiftyTiles: 3
+  enemiesPerFiftyTiles: 0
 --- !u!114 &2016305377
 MonoBehaviour:
   m_ObjectHideFlags: 0

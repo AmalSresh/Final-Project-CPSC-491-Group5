@@ -106,7 +106,6 @@ public class PlayerHealth : MonoBehaviour
     void Die()
     {
         Debug.Log("Player Died");
-
         if (GameOverManager.Instance != null)
         {
             GameOverManager.Instance.Show();

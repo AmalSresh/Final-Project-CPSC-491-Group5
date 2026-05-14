@@ -18,6 +18,9 @@ public class GameManager : MonoBehaviour
     public PlayerSpawner playerSpawner;
     public Transform player;
 
+    [Header("Items")]
+    public GameObject HealthPack;
+
     void Awake()
     {
         if (Instance == null)
@@ -67,11 +70,25 @@ public class GameManager : MonoBehaviour
 
         // Build the Map
         dungeonGenerator.GenerateDungeon();
+
         List<Vector2> validTiles = dungeonGenerator.GetWalkableTiles();
+
+        if (HealthPack != null && validTiles.Count > 0)
+        {
+            // Pick a random tile index
+            int randomIndex = Random.Range(0, validTiles.Count);
+            Vector2 randomTile = validTiles[randomIndex];
+
+            // Spawn the health pack
+            Instantiate(HealthPack, new Vector3(randomTile.x, randomTile.y, -0.1f), Quaternion.identity);
+
+            // Optional: Remove that tile from the list so an enemy doesn't spawn exactly on top of it
+            validTiles.RemoveAt(randomIndex);
+        }
 
         // Spawn Enemies & Update Goal
         enemySpawner.SpawnEnemies(validTiles);
-        CountEnemiesInLevel();
+        //CountEnemiesInLevel();
 
         // Spawn Player
         if (validTiles.Count > 0)
@@ -116,12 +133,11 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void CountEnemiesInLevel()
+    public void SetTargetEnemyCount(int exactCount)
     {
-        // Finds every object with the EnemyHealth script currently in the scene
-        enemiesRequiredToWin = Object.FindObjectsByType<EnemyHealth>(FindObjectsSortMode.None).Length;
+        enemiesRequiredToWin = exactCount;
         levelKills = 0; 
-        Debug.Log("Enemies in this level: " + enemiesRequiredToWin);
+        Debug.Log("Enemies locked in for this level: " + enemiesRequiredToWin);
     }
 
     public void ResetGame()
