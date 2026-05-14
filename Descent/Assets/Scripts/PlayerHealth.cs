@@ -8,31 +8,47 @@ public class PlayerHealth : MonoBehaviour
     public int currentHealth;
 
     public Slider healthBar;
-   
+
+    [Header("Audio")]
+    [Tooltip("AudioSource whose clip is the player hurt sound. " +
+             "Add an AudioSource to the Player prefab, assign your hurt .wav/.ogg as its clip, " +
+             "Play On Awake = OFF, Loop = OFF.")]
+    public AudioSource damageAudioSource;
+
     void Start()
     {
-        currentHealth = maxHealth;
-        ReconnectAndSyncUI();
-    }
+        // Load healthbar programmatically instead of through inspector
+        if (healthBar == null)
+        {
+            GameObject foundSlider = GameObject.Find("HealthBar");
+            if (foundSlider != null)
+            {
+                healthBar = foundSlider.GetComponent<Slider>();
+            }
+            else
+            {
+                Debug.LogError("Could not find HealthBar");
+            }
+        }
 
-    public void ReconnectAndSyncUI()
-    {
-        GameObject foundSlider = GameObject.Find("HealthBar");
-        if (foundSlider != null)
-        {
-            healthBar = foundSlider.GetComponent<Slider>();
+        // Auto-grab AudioSource if not assigned in Inspector
+        if (damageAudioSource == null)
+            damageAudioSource = GetComponent<AudioSource>();
+
+        currentHealth = maxHealth;
+
+        if (healthBar != null)
             healthBar.maxValue = maxHealth;
-        }
-        else
-        {
-            Debug.LogWarning("Could not find HealthBar in this scene.");
-        }
 
         UpdateHealthBar();
     }
 
     public void TakeDamage(int damage)
     {
+        // Play hurt sound
+        if (damageAudioSource != null && damageAudioSource.clip != null)
+            damageAudioSource.PlayOneShot(damageAudioSource.clip);
+
         currentHealth -= damage;
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
         UpdateHealthBar();
@@ -54,19 +70,20 @@ public class PlayerHealth : MonoBehaviour
 
     public void UpdateHealthBar()
     {
-        Debug.Log("UpdateHealthBar is being called");
+        Debug.Log("This is being called");
         if (healthBar != null)
-        {   
-            Debug.Log("Healthbar exists! Updating value.");
+        {
+            Debug.Log("Healthbar exists!");
             healthBar.value = currentHealth;
         }
     }
 
     public void ResetHealth()
     {
-        currentHealth = maxHealth; 
-        
-        ReconnectAndSyncUI();
+        currentHealth = 10;
+
+        // Force the visual UI bar to update immediately
+        Start();
         Debug.Log("Player Health and UI Reset to Full.");
     }
 
@@ -83,8 +100,7 @@ public class PlayerHealth : MonoBehaviour
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         Debug.Log("New scene loaded! Player is looking for the new Healthbar...");
-        
-        ReconnectAndSyncUI();
+        ResetHealth();
     }
 
     void Die()

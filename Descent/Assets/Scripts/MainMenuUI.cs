@@ -5,40 +5,48 @@ using UnityEngine.SceneManagement;
 public class MainMenuUI : MonoBehaviour
 {
     public AudioMixer audioMixer;
+
+    [Header("Background Music")]
     public AudioSource musicSource;
 
     void Start()
     {
-        // Load saved volume (default 1 if not set)
         float volume = PlayerPrefs.GetFloat("MasterVolume", 1f);
-
-        // Prevent Log10(0) -> -Infinity
         volume = Mathf.Clamp(volume, 0.0001f, 1f);
-
-        // Apply to AudioMixer
         if (audioMixer != null)
-        {
             audioMixer.SetFloat("MasterVolume", Mathf.Log10(volume) * 20);
+
+        StartMusic();
+    }
+
+    private void StartMusic()
+    {
+        if (musicSource == null) return;
+
+        // Check if a MusicManager already exists from a previous scene load
+        MusicManager existing = Object.FindFirstObjectByType<MusicManager>();
+        if (existing != null)
+        {
+            // Already playing — destroy the duplicate source on this object
+            Destroy(musicSource.gameObject);
+            return;
         }
 
-        // Optional: start playing music
-        if (musicSource != null && !musicSource.isPlaying)
-        {
+        // Move the music source to a dedicated persistent manager
+        musicSource.gameObject.AddComponent<MusicManager>();
+        DontDestroyOnLoad(musicSource.gameObject);
+
+        if (!musicSource.isPlaying)
             musicSource.Play();
-        }
     }
 
     public void StartGame()
     {
         Debug.Log("NEW GAME STARTED");
 
-        // Reset game state
         if (GameManager.Instance != null)
-        {
             GameManager.Instance.ResetGame();
-        }
 
-        // Load gameplay scene
         SceneManager.LoadScene("Test_room");
     }
 
@@ -52,14 +60,12 @@ public class MainMenuUI : MonoBehaviour
     {
         Debug.Log("QUIT CLICKED");
 
-        // Only quit in a build
         if (Application.isEditor)
         {
             Debug.Log("Application.Quit() ignored in Editor.");
             return;
         }
 
-        // Quit application
         Application.Quit();
     }
 }

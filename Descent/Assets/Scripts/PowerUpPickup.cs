@@ -11,16 +11,25 @@ public class PowerUpPickup : MonoBehaviour
 
     [Header("Power-Up Settings")]
     public PowerUpType powerUpType;
-    public int damageBoostAmount = 1;
-    public float rangeBoostAmount = 1f;
-    public int healAmount = 3;
+    public int damageBoostAmount   = 1;
+    public float rangeBoostAmount  = 1f;
+    public int healAmount          = 3;
+
+    [Header("Audio")]
+    [Tooltip("AudioSource whose clip is the pickup sound. " +
+             "Add an AudioSource to the PowerUp prefab, assign your pickup .wav/.ogg, " +
+             "Play On Awake = OFF, Loop = OFF.")]
+    public AudioSource pickupAudioSource;
+
+    void Awake()
+    {
+        if (pickupAudioSource == null)
+            pickupAudioSource = GetComponent<AudioSource>();
+    }
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (!other.CompareTag("Player"))
-        {
-            return;
-        }
+        if (!other.CompareTag("Player")) return;
 
         PlayerAttack playerAttack = other.GetComponent<PlayerAttack>();
         PlayerHealth playerHealth = other.GetComponent<PlayerHealth>();
@@ -50,6 +59,15 @@ public class PowerUpPickup : MonoBehaviour
                     Debug.Log("Picked up Health Power-Up!");
                 }
                 break;
+        }
+
+        // Play pickup sound before destroying the object.
+        // We detach the AudioSource so it can finish playing after the GameObject is gone.
+        if (pickupAudioSource != null && pickupAudioSource.clip != null)
+        {
+            pickupAudioSource.transform.SetParent(null);
+            pickupAudioSource.PlayOneShot(pickupAudioSource.clip);
+            Destroy(pickupAudioSource.gameObject, pickupAudioSource.clip.length + 0.1f);
         }
 
         Destroy(gameObject);
