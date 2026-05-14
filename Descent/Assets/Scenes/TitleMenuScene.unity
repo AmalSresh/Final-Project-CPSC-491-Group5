@@ -1365,6 +1365,7 @@ MonoBehaviour:
   enemySpawner: {fileID: 0}
   playerSpawner: {fileID: 0}
   player: {fileID: 0}
+  HealthPack: {fileID: 6840601051565453771, guid: 0f47ebacedae81d429b056144f10e90c, type: 3}
 --- !u!4 &1881803070
 Transform:
   m_ObjectHideFlags: 0
