@@ -9,12 +9,12 @@ public class PlayerMovement : MonoBehaviour
     public float speed = 5f;
 
     [Header("Footstep Audio")]
-    [Tooltip("AudioSource on this GameObject whose clip is your footstep sound. " +
-             "Add an AudioSource component to the Player prefab, set its clip to " +
-             "your footstep .wav/.ogg, Play On Awake = OFF, Loop = OFF.")]
     public AudioSource footstepAudioSource;
     [Tooltip("Seconds between each footstep while moving")]
     public float footstepInterval = 0.35f;
+    [Tooltip("Volume of footstep sounds (0 to 1). Lowered to 0.3 by default.")]
+    [Range(0f, 1f)]
+    public float footstepVolume = 0.3f;
 
     private Animator animator;
     private SpriteRenderer sprite;
@@ -28,7 +28,6 @@ public class PlayerMovement : MonoBehaviour
         animator = GetComponent<Animator>();
         sprite   = GetComponent<SpriteRenderer>();
 
-        // Auto-grab if not assigned in Inspector
         if (footstepAudioSource == null)
             footstepAudioSource = GetComponent<AudioSource>();
     }
@@ -51,7 +50,6 @@ public class PlayerMovement : MonoBehaviour
         if (animator != null)
             animator.SetFloat("Speed", move.magnitude);
 
-        // Flip sprite left/right
         if (move.x < 0)       sprite.flipX = true;
         else if (move.x > 0)  sprite.flipX = false;
 
@@ -67,13 +65,13 @@ public class PlayerMovement : MonoBehaviour
             footstepTimer -= Time.fixedDeltaTime;
             if (footstepTimer <= 0f)
             {
-                footstepAudioSource.PlayOneShot(footstepAudioSource.clip);
+                // Use footstepVolume instead of full volume
+                footstepAudioSource.PlayOneShot(footstepAudioSource.clip, footstepVolume);
                 footstepTimer = footstepInterval;
             }
         }
         else
         {
-            // Reset so first step fires immediately when moving again
             footstepTimer = 0f;
         }
     }
