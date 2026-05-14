@@ -11,23 +11,21 @@ public class PlayerHealth : MonoBehaviour
    
     void Start()
     {
-        // load healthbar programmatically instead of through inspector
-        if (healthBar == null)
-        {
-            GameObject foundSlider = GameObject.Find("HealthBar");
-            if (foundSlider != null)
-            {
-                healthBar = foundSlider.GetComponent<Slider>();
-            }
-            else{
-                Debug.LogError("Could not find HealthBar");
-            }
-        }
         currentHealth = maxHealth;
+        ReconnectAndSyncUI();
+    }
 
-        if (healthBar != null)
+    public void ReconnectAndSyncUI()
+    {
+        GameObject foundSlider = GameObject.Find("HealthBar");
+        if (foundSlider != null)
         {
+            healthBar = foundSlider.GetComponent<Slider>();
             healthBar.maxValue = maxHealth;
+        }
+        else
+        {
+            Debug.LogWarning("Could not find HealthBar in this scene.");
         }
 
         UpdateHealthBar();
@@ -35,10 +33,6 @@ public class PlayerHealth : MonoBehaviour
 
     public void TakeDamage(int damage)
     {
-        // if (damageAudio != null)
-        // {
-        //     damageAudio.play();
-        // }
         currentHealth -= damage;
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
         UpdateHealthBar();
@@ -48,7 +42,6 @@ public class PlayerHealth : MonoBehaviour
         if (currentHealth == 0)
         {
             Die();
-            //GameOverManager.Instance.Show();
         }
     }
 
@@ -61,21 +54,19 @@ public class PlayerHealth : MonoBehaviour
 
     public void UpdateHealthBar()
     {
-        Debug.Log("This is being called");
+        Debug.Log("UpdateHealthBar is being called");
         if (healthBar != null)
         {   
-            Debug.Log("Healthbar exists!");
+            Debug.Log("Healthbar exists! Updating value.");
             healthBar.value = currentHealth;
         }
     }
 
     public void ResetHealth()
     {
-        currentHealth = 10; 
+        currentHealth = maxHealth; 
         
-        // Force the visual UI bar to update immediately!
-        // (Make sure to use your actual UI variable name here, like healthSlider, healthBar, etc.)
-        Start();
+        ReconnectAndSyncUI();
         Debug.Log("Player Health and UI Reset to Full.");
     }
 
@@ -84,17 +75,16 @@ public class PlayerHealth : MonoBehaviour
         SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
-    // 2. Unsubscribe if the player is destroyed (prevents memory leaks)
     void OnDisable()
     {
         SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
-    // 3. This runs automatically EVERY time a new scene finishes loading!
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         Debug.Log("New scene loaded! Player is looking for the new Healthbar...");
-        ResetHealth();
+        
+        ReconnectAndSyncUI();
     }
 
     void Die()

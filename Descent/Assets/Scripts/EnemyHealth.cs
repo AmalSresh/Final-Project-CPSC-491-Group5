@@ -79,7 +79,7 @@ public class EnemyHealth : MonoBehaviour
             GameManager.Instance.AddKill();
         }
         
-        Destroy(gameObject, 1.5f);
+        Destroy(gameObject, audioSource.clip.length + 0.1f);
     }
 
 }
