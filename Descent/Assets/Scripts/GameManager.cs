@@ -9,6 +9,7 @@ public class GameManager : MonoBehaviour
     [Header("Enemy Tracking")]
     public int totalKills;
     public int levelKills;
+    public int level;
     public int enemiesRequiredToWin;
     
     [Header("Level Generation Refs")]
@@ -50,7 +51,7 @@ public class GameManager : MonoBehaviour
     public void StartLevel()
     {
         Debug.Log("Generating new level...");
-
+        level++;
         // Find the pieces that exist in the newly loaded scene
         dungeonGenerator = Object.FindAnyObjectByType<DungeonGenerator>();
         enemySpawner = Object.FindAnyObjectByType<EnemySpawner>();
@@ -132,6 +133,7 @@ public class GameManager : MonoBehaviour
 
         totalKills = 0;
         levelKills = 0;
+        level = 0;
 
         // Heal the persistent player so they don't spawn dead
         GameObject playerObj = GameObject.FindGameObjectWithTag("Player");

@@ -673,8 +673,8 @@ Camera:
   m_GameObject: {fileID: 872244754}
   m_Enabled: 1
   serializedVersion: 2
-  m_ClearFlags: 1
-  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_ClearFlags: 2
+  m_BackGroundColor: {r: 0, g: 0, b: 0, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -1357,10 +1357,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f5c8a2ec78b04994b8d8ecc746f2a28d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
-  playerHealth: 100
-  playerXP: 0
   totalKills: 0
   levelKills: 0
+  level: 0
   enemiesRequiredToWin: 0
   dungeonGenerator: {fileID: 0}
   enemySpawner: {fileID: 0}

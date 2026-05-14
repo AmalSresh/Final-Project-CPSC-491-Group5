@@ -242,7 +242,6 @@ MonoBehaviour:
   maxHealth: 10
   currentHealth: 10
   healthBar: {fileID: 0}
-  GameOverUI: {fileID: 0}
 --- !u!114 &8003240934218054664
 MonoBehaviour:
   m_ObjectHideFlags: 0
